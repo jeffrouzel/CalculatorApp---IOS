@@ -131,6 +131,8 @@ class ViewController: UIViewController {
             print("Invalid equation")
         }else {
             var cleaned = equation.replacingOccurrences(of: "%", with: "/100.0")
+            cleaned = cleaned.replacingOccurrences(of: "−", with: "-")
+            
             let expression = NSExpression(format: cleaned)
             
             if let result = expression.expressionValue(with: nil, context: nil) as? Double {
@@ -144,6 +146,28 @@ class ViewController: UIViewController {
             } else {
                 print("Invalid equation")
                 lblScreen.text = "Error"
+            }
+        }
+    }
+    @IBAction func change_sign(_ sender: UIButton) {
+        if equation.isEmpty {
+            print("No number")
+        } else {
+            let numbers = equation.components(separatedBy: CharacterSet(charactersIn: "+-*/"))
+            if let curr_num = numbers.last{
+                if curr_num.contains("%"){
+                    print("\(curr_num)")
+                } else if curr_num.contains("(−") {
+                    equation.removeLast(curr_num.count)
+                    var positive = curr_num.replacingOccurrences(of: "(−", with: "")
+                    positive = positive.replacingOccurrences(of: ")", with: "")
+                    lblScreen.text = equation + positive
+                    return equation = lblScreen.text!
+                } else {
+                    equation.removeLast(curr_num.count)
+                    lblScreen.text = equation + "(−\(curr_num))"
+                    return equation = lblScreen.text!
+                }
             }
         }
     }
