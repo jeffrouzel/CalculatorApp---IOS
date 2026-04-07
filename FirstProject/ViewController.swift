@@ -35,10 +35,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var btn_9: UIButton!
     @IBOutlet weak var btn_00: UIButton!
     
-    var equation = ""
-    let operators: [Character] = ["+", "-", "*", "/"]
-    var solved: Bool = false
-
+    let viewModel = calculatorViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         lblScreen.layer.borderWidth = 2.0
@@ -48,128 +46,38 @@ class ViewController: UIViewController {
         lblScreen.text = ""
         lblError.text = ""
         }
-
-    @IBAction func num0(_ sender: UIButton) {appendNumber("0")}
-    @IBAction func num1(_ sender: UIButton) {appendNumber("1")}
-    @IBAction func num2(_ sender: UIButton) {appendNumber("2")}
-    @IBAction func num3(_ sender: UIButton) {appendNumber("3")}
-    @IBAction func num4(_ sender: UIButton) {appendNumber("4")}
-    @IBAction func num5(_ sender: UIButton) {appendNumber("5")}
-    @IBAction func num6(_ sender: UIButton) {appendNumber("6")}
-    @IBAction func num7(_ sender: UIButton) {appendNumber("7")}
-    @IBAction func num8(_ sender: UIButton) {appendNumber("8")}
-    @IBAction func num9(_ sender: UIButton) {appendNumber("9")}
-    @IBAction func numD0(_ sender: UIButton) {appendNumber("00")
+    
+    func updateView() {
+        lblScreen.text = viewModel.getEquation()
+        lblError.text = viewModel.getErrorText()
     }
     
-    func appendNumber(_ num: String) {
-        if solved{
-            lblScreen.text = num
-            solved = false
-            return equation = lblScreen.text!
-        } else if equation.last == "%"{
-            lblScreen.text = equation + "*" + num
-            return equation = lblScreen.text!
-        }else {
-            lblError.text = ""
-            lblScreen.text = equation + num
-            return equation = lblScreen.text!
-        }
-    }
+    @IBAction func num0(_ sender: UIButton) {viewModel.appendNumber("0"); updateView()}
+    @IBAction func num1(_ sender: UIButton) {viewModel.appendNumber("1"); updateView()}
+    @IBAction func num2(_ sender: UIButton) {viewModel.appendNumber("2"); updateView()}
+    @IBAction func num3(_ sender: UIButton) {viewModel.appendNumber("3"); updateView()}
+    @IBAction func num4(_ sender: UIButton) {viewModel.appendNumber("4"); updateView()}
+    @IBAction func num5(_ sender: UIButton) {viewModel.appendNumber("5"); updateView()}
+    @IBAction func num6(_ sender: UIButton) {viewModel.appendNumber("6"); updateView()}
+    @IBAction func num7(_ sender: UIButton) {viewModel.appendNumber("7"); updateView()}
+    @IBAction func num8(_ sender: UIButton) {viewModel.appendNumber("8"); updateView()}
+    @IBAction func num9(_ sender: UIButton) {viewModel.appendNumber("9"); updateView()}
+    @IBAction func numD0(_ sender: UIButton) {viewModel.appendNumber("00"); updateView()}
     
-    @IBAction func add(_ sender: UIButton) {appendOperator("+")}
-    @IBAction func subtract(_ sender: UIButton) {appendOperator("-")}
-    @IBAction func multiply(_ sender: UIButton) {appendOperator("*")}
-    @IBAction func divide(_ sender: UIButton) {appendOperator("/")}
+    @IBAction func add(_ sender: UIButton) {viewModel.appendOperator("+"); updateView()}
+    @IBAction func subtract(_ sender: UIButton) {viewModel.appendOperator("-"); updateView()}
+    @IBAction func multiply(_ sender: UIButton) {viewModel.appendOperator("*"); updateView()}
+    @IBAction func divide(_ sender: UIButton) {viewModel.appendOperator("/"); updateView()}
     
-    func appendOperator(_ op: String) {
-        if equation.isEmpty {
-            print("No number")
-        } else if let lastChar = equation.last, operators.contains(lastChar) {
-            lblError.text = ""
-            equation.removeLast()
-            lblScreen.text = equation + op
-            return equation = lblScreen.text!
-        } else {
-            solved = false
-            lblError.text = ""
-            lblScreen.text = equation + op
-            return equation = lblScreen.text!
-        }
-    }
     
-    @IBAction func percent(_ sender: UIButton) {percentperiod("%")}
-    @IBAction func period(_ sender: UIButton) {percentperiod(".")}
     
-    func percentperiod(_ symbol: String){
-        if equation.isEmpty{
-            print("No number")
-        }else if let lastchar = equation.last, operators.contains(lastchar){
-            print("Invalid operation")
-        }else {
-            lblScreen.text = equation + symbol
-            return equation = lblScreen.text!
-        }    }
+    @IBAction func percent(_ sender: UIButton) {viewModel.percent(); updateView()}
+    @IBAction func period(_ sender: UIButton) {viewModel.period(); updateView()}
     
-    @IBAction func clear(_ sender: UIButton) {
-        lblScreen.text = ""
-        return equation = lblScreen.text!
-    }
-    @IBAction func remove(_ sender: UIButton) {
-        if equation.isEmpty {
-            print("No number")
-        } else{
-            equation.removeLast()
-            lblScreen.text = equation
-        }
-    }
-    @IBAction func solve(_ sender: UIButton) {
-        if equation.isEmpty {
-            print("No number")
-        } else if let lastchar = equation.last, operators.contains(lastchar) || equation.last == "."{
-            lblError.text = "Error"
-            print("Invalid equation")
-        }else {
-            var cleaned = equation.replacingOccurrences(of: "%", with: "/100.0")
-            cleaned = cleaned.replacingOccurrences(of: "−", with: "-")
-            
-            let expression = NSExpression(format: cleaned)
-            
-            if let result = expression.expressionValue(with: nil, context: nil) as? Double {
-                if result == result.rounded() {
-                    lblScreen.text = String(Int(result))
-                } else {
-                    lblScreen.text = String(result)
-                }
-                solved = true
-                return equation = lblScreen.text!
-            } else {
-                print("Invalid equation")
-                lblScreen.text = "Error"
-            }
-        }
-    }
-    @IBAction func change_sign(_ sender: UIButton) {
-        if equation.isEmpty {
-            print("No number")
-        } else {
-            let numbers = equation.components(separatedBy: CharacterSet(charactersIn: "+-*/"))
-            if let curr_num = numbers.last{
-                if curr_num.contains("%"){
-                    print("\(curr_num)")
-                } else if curr_num.contains("(−") {
-                    equation.removeLast(curr_num.count)
-                    var positive = curr_num.replacingOccurrences(of: "(−", with: "")
-                    positive = positive.replacingOccurrences(of: ")", with: "")
-                    lblScreen.text = equation + positive
-                    return equation = lblScreen.text!
-                } else {
-                    equation.removeLast(curr_num.count)
-                    lblScreen.text = equation + "(−\(curr_num))"
-                    return equation = lblScreen.text!
-                }
-            }
-        }
-    }
+    
+    @IBAction func clear(_ sender: UIButton) { viewModel.clearEquation(); updateView() }
+    @IBAction func remove(_ sender: UIButton) {viewModel.deleteCharacter(); updateView()}
+    @IBAction func solve(_ sender: UIButton) {viewModel.solveEquation(); updateView()}
+    @IBAction func change_sign(_ sender: UIButton) {viewModel.changeSign(); updateView()}
 }
 
