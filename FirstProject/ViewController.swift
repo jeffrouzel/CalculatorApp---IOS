@@ -35,7 +35,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var btn_9: UIButton!
     @IBOutlet weak var btn_00: UIButton!
     
-    let viewModel = calculatorViewModel()
+    var viewModel: calculatorViewModel = calculatorViewModel()
+    
+    var resultText: String = ""
+    var errorText: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,41 +46,53 @@ class ViewController: UIViewController {
         lblScreen.layer.borderColor = UIColor.black.cgColor
         lblScreen.layer.cornerRadius = 8.0
         
-        lblScreen.text = ""
-        lblError.text = ""
+        lblScreen.text = resultText
+        lblError.text = errorText
         }
     
-    func updateView() {
-        lblScreen.text = viewModel.getEquation()
-        lblError.text = viewModel.getErrorText()
+    func updateView(displayText: (String,String)) {
+        lblScreen.text = displayText.0
+        lblError.text = displayText.1
     }
     
-    @IBAction func num0(_ sender: UIButton) {viewModel.appendNumber("0"); updateView()}
-    @IBAction func num1(_ sender: UIButton) {viewModel.appendNumber("1"); updateView()}
-    @IBAction func num2(_ sender: UIButton) {viewModel.appendNumber("2"); updateView()}
-    @IBAction func num3(_ sender: UIButton) {viewModel.appendNumber("3"); updateView()}
-    @IBAction func num4(_ sender: UIButton) {viewModel.appendNumber("4"); updateView()}
-    @IBAction func num5(_ sender: UIButton) {viewModel.appendNumber("5"); updateView()}
-    @IBAction func num6(_ sender: UIButton) {viewModel.appendNumber("6"); updateView()}
-    @IBAction func num7(_ sender: UIButton) {viewModel.appendNumber("7"); updateView()}
-    @IBAction func num8(_ sender: UIButton) {viewModel.appendNumber("8"); updateView()}
-    @IBAction func num9(_ sender: UIButton) {viewModel.appendNumber("9"); updateView()}
-    @IBAction func numD0(_ sender: UIButton) {viewModel.appendNumber("00"); updateView()}
+    @IBAction func num0(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("0"))}
+    @IBAction func num1(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("1"))}
+    @IBAction func num2(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("2"))}
+    @IBAction func num3(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("3"))}
+    @IBAction func num4(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("4"))}
+    @IBAction func num5(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("5"))}
+    @IBAction func num6(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("6"))}
+    @IBAction func num7(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("7"))}
+    @IBAction func num8(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("8"))}
+    @IBAction func num9(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("9"))}
+    @IBAction func numD0(_ sender: UIButton) {updateView(displayText: viewModel.appendNumber("00"))}
     
-    @IBAction func add(_ sender: UIButton) {viewModel.appendOperator("+"); updateView()}
-    @IBAction func subtract(_ sender: UIButton) {viewModel.appendOperator("-"); updateView()}
-    @IBAction func multiply(_ sender: UIButton) {viewModel.appendOperator("*"); updateView()}
-    @IBAction func divide(_ sender: UIButton) {viewModel.appendOperator("/"); updateView()}
-    
-    
-    
-    @IBAction func percent(_ sender: UIButton) {viewModel.percent(); updateView()}
-    @IBAction func period(_ sender: UIButton) {viewModel.period(); updateView()}
+    @IBAction func add(_ sender: UIButton) {updateView(displayText: viewModel.appendOperator("+"))}
+    @IBAction func subtract(_ sender: UIButton) {updateView(displayText: viewModel.appendOperator("-"))}
+    @IBAction func multiply(_ sender: UIButton) {updateView(displayText: viewModel.appendOperator("*"))}
+    @IBAction func divide(_ sender: UIButton) {updateView(displayText: viewModel.appendOperator("/"))}
     
     
-    @IBAction func clear(_ sender: UIButton) { viewModel.clearEquation(); updateView() }
-    @IBAction func remove(_ sender: UIButton) {viewModel.deleteCharacter(); updateView()}
-    @IBAction func solve(_ sender: UIButton) {viewModel.solveEquation(); updateView()}
-    @IBAction func change_sign(_ sender: UIButton) {viewModel.changeSign(); updateView()}
+    
+    @IBAction func percent(_ sender: UIButton) {updateView(displayText: viewModel.percent())}
+    @IBAction func period(_ sender: UIButton) {updateView(displayText: viewModel.period())}
+    
+    
+    @IBAction func clear(_ sender: UIButton) { updateView(displayText: viewModel.clearEquation()) }
+    @IBAction func remove(_ sender: UIButton) {updateView(displayText: viewModel.deleteCharacter())}
+
+    @IBAction func change_sign(_ sender: UIButton) {updateView(displayText: viewModel.changeSign())}
+    
+    @IBAction func solve(_ sender: UIButton) {
+        updateView(displayText: viewModel.solveEquation())
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        let resultView = storyboard.instantiateViewController(withIdentifier: "ResultViewController") as! ResultViewController // Force to be able to acknowledge the presence of the variables
+        
+        // Needed to pass on values
+        resultView.resultText = viewModel.getEquation()
+        resultView.errorText = viewModel.getErrorText()
+        self.navigationController?.pushViewController(resultView, animated: true)
+    }
 }
 

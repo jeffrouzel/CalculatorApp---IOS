@@ -18,7 +18,7 @@ class calculatorViewModel {
     func getEquation() -> String {return equation}
     func getErrorText() -> String {return errorText}
 // APPENDING OF NUMBER
-    func appendNumber(_ num: String) {
+    func appendNumber(_ num: String) -> (String, String){
         clearError()
         if solved{
             equation = num
@@ -28,9 +28,10 @@ class calculatorViewModel {
         }else {
             equation = equation + num
         }
+        return (equation, errorText)
     }
 // APPENDING OF SYMBOLS
-    func appendOperator(_ op: String) {
+    func appendOperator(_ op: String) -> (String, String){
         if equation.isEmpty {
             print("No number to add operator")
         } else if let lastChar = equation.last, operators.contains(lastChar) || lastChar == "."{
@@ -45,9 +46,10 @@ class calculatorViewModel {
             solved = false
             equation = equation + op
         }
+        return (equation, errorText)
     }
     
-    func percent(){
+    func percent() -> (String, String){
         if equation.isEmpty{
             print("No number to add percent")
         }else if let lastchar = equation.last, operators.contains(lastchar){
@@ -56,9 +58,10 @@ class calculatorViewModel {
             solved = false
             equation = equation + "%"
         }
+        return (equation, errorText)
     }
     
-    func period(){
+    func period() -> (String, String){
         if periodPresence{
             errorText = "Error"
             print("Cannot add period")
@@ -74,9 +77,10 @@ class calculatorViewModel {
                 equation = equation + "."
             }
         }
+        return (equation, errorText)
     }
 // REMOVING OF CHARACTERS/TEXT IN THE EQUATION
-    func clearEquation(){
+    func clearEquation()-> (String,String){
         if equation.isEmpty {
             print("No number to clear")
         } else {
@@ -85,9 +89,10 @@ class calculatorViewModel {
             periodPresence = false
             equation = ""
         }
+        return (equation, errorText)
     }
     
-    func deleteCharacter(){
+    func deleteCharacter()-> (String,String){
         if equation.isEmpty {
             print("No number to delete")
         } else if equation.last == "."{         // IN THE CASE OF DELETING A PERIOD, SET BOOL PRESENCE TO FALSE
@@ -96,10 +101,11 @@ class calculatorViewModel {
         }else{
             equation.removeLast()
         }
+        return (equation, errorText)
     }
 
 // SOLVING
-    func solveEquation(){
+    func solveEquation()-> (String,String){
         if equation.isEmpty {
             print("No number to solve")
         } else if let lastchar = equation.last, operators.contains(lastchar){
@@ -135,13 +141,14 @@ class calculatorViewModel {
                 errorText = "Error"
             }
         }
+        return (equation, errorText)
     }
 // CLEARING ERROR TEXTS
     func clearError(){
         errorText = ""
     }
 // CHANGING THE SIGN OF THE LATEST NUMBER
-    func changeSign(){
+    func changeSign()-> (String,String){
         if equation.isEmpty {
             print("No number to change sign on")
         } else if let lastchar = equation.last, operators.contains(lastchar){
@@ -162,6 +169,7 @@ class calculatorViewModel {
                 }
             }
         }
+        return (equation,errorText)
     }
 }
 
