@@ -32,10 +32,13 @@ class ResultViewController: UIViewController{
     @IBAction func popResultViewController(_ sender: UIButton) {
         updateView(displayText: viewModel.clearEquation())
         let homeView = ViewController(nibName: "ViewController", bundle: nil)
-        homeView.resultText = viewModel.getEquation()
-        homeView.errorText = viewModel.getErrorText()
+        homeView.mainResultText = viewModel.getEquation()
+        homeView.mainErrorText = viewModel.getErrorText()
         self.navigationController?.popViewController(animated: true)
         
+    }
+    @IBAction func goBack(_ sender: UIButton) {
+        self.navigationController?.popViewController(animated: true)
     }
 }
 

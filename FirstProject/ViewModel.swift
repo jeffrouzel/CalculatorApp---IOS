@@ -15,6 +15,9 @@ class calculatorViewModel {
     private var periodPresence: Bool = false                         // FOR AVOIDING DOUBLE OCCURANCE OF PERIOD IN A NUMBER
 
 // SHARING OF THE TEXT TO VIEW
+    func fetchValues() -> (String, String){
+        return (equation, errorText)
+    }
     func getEquation() -> String {return equation}
     func getErrorText() -> String {return errorText}
 // APPENDING OF NUMBER
@@ -81,6 +84,7 @@ class calculatorViewModel {
     }
 // REMOVING OF CHARACTERS/TEXT IN THE EQUATION
     func clearEquation()-> (String,String){
+        print(equation)
         if equation.isEmpty {
             print("No number to clear")
         } else {
